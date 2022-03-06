@@ -22,7 +22,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 	if err := json.Unmarshal(bytes, &user); err != nil {
-		log.Fatal("Error unmarshalling", err)
+		log.Fatal("Error unmarshalling", err.Error())
 	}
 	fmt.Println(user)
 	c.String(http.StatusNotImplemented, "implement me!")
