@@ -1,12 +1,10 @@
 package users_controller
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github/atakanteko/bookstore_users-api/domain/users"
-	"io"
-	"log"
+	"github/atakanteko/bookstore_users-api/services"
+	"github/atakanteko/bookstore_users-api/utils/errors"
 	"net/http"
 )
 
@@ -16,14 +14,15 @@ func GetUser(c *gin.Context) {
 
 func CreateUser(c *gin.Context) {
 	var user users.User
-	bytes, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		//TODO
+	if err := c.ShouldBindJSON(&user); err != nil {
+		restErr := errors.NewBadRequestError("invalid json body")
+		c.JSON(restErr.Status, restErr)
 		return
 	}
-	if err := json.Unmarshal(bytes, &user); err != nil {
-		log.Fatal("Error unmarshalling", err.Error())
+	result, saveErr := services.CreateUser(user)
+	if saveErr != nil {
+		c.JSON(saveErr.Status, saveErr)
+		return
 	}
-	fmt.Println(user)
-	c.String(http.StatusNotImplemented, "implement me!")
+	c.JSON(http.StatusCreated, result)
 }
