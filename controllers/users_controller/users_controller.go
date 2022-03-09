@@ -6,10 +6,21 @@ import (
 	"github/atakanteko/bookstore_users-api/services"
 	"github/atakanteko/bookstore_users-api/utils/errors"
 	"net/http"
+	"strconv"
 )
 
 func GetUser(c *gin.Context) {
-	c.String(http.StatusNotImplemented, "implement me!")
+	userId, userErr := strconv.ParseInt(c.Param("user_id"), 10, 64)
+	if userErr != nil {
+		err := errors.NewBadRequestError("invalid user id")
+		c.JSON(err.Status, err)
+		return
+	}
+	user, getErr := services.GetUser(userId)
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+	}
+	c.JSON(http.StatusOK, user)
 }
 
 func CreateUser(c *gin.Context) {
