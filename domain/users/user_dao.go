@@ -2,6 +2,7 @@ package users
 
 import (
 	"fmt"
+	"github/atakanteko/bookstore_users-api/datasources/mysql/users_db"
 	"github/atakanteko/bookstore_users-api/utils/date_utils"
 	"github/atakanteko/bookstore_users-api/utils/errors"
 )
@@ -11,6 +12,7 @@ var (
 )
 
 func (user *User) Get() *errors.RestErr {
+	users_db.Init()
 	result := userDB[user.ID]
 	if result == nil {
 		return errors.NewNotFoundError(fmt.Sprintf("user %d not found", user.ID))
